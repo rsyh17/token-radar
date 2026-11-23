@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Launch Radar — pre-token protocols ranked by implied launch value</title>
+<link rel="stylesheet" href="./app.css">
+</head>
+<body>
+<header>
+  <div class="masthead">
+    <h1>TOKEN LAUNCH RADAR</h1>
+    <p class="tagline">Every protocol that records no token yet, ranked by what its launch would be worth — and how to farm each one before it happens.</p>
+    <p class="meta" id="meta"></p>
+  </div>
+  <section class="model" id="model">
+    <h2>How the value is derived</h2>
+    <p id="model-text"></p>
+  </section>
+  <div class="controls">
+    <input id="search" type="search" placeholder="Search protocols…">
+    <select id="category"><option value="">All categories</option></select>
+    <select id="chain"><option value="">All chains</option></select>
+    <label class="check"><input id="watchonly" type="checkbox"> Watchlist only</label>
+    <select id="sort">
+      <option value="rank">Sort: implied value</option>
+      <option value="tvl">Sort: TVL</option>
+      <option value="change">Sort: 7-day growth</option>
+      <option value="years">Sort: years tokenless</option>
+    </select>
+    <span class="count" id="count"></span>
+  </div>
+</header>
+<main>
+  <table id="board">
+    <thead>
+      <tr><th>#</th><th>Protocol</th><th>Category</th><th>Chains</th><th>TVL</th><th>7d</th><th>Years tokenless</th><th>Multiple</th><th>Implied value</th></tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <aside id="detail" hidden>
+    <button id="close" aria-label="Close detail">×</button>
+    <div id="detail-body"></div>
+  </aside>
+</main>
+<footer>
+  <p>Implied value is this radar's own model claim, derived only from the sealed snapshot's figures — TVL, seven-day growth, time run with no token, and what traded peers' tokens fetch per TVL dollar. It is not a prediction that a token will be issued. Protocols whose token already trades, and wrapped, staked or bridged products of them, are set aside: they are not waiting on a launch.</p>
+</footer>
+<script src="../data.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>
