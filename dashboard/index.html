@@ -3,60 +3,77 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Token Launch Radar — pre-token protocols ranked by implied launch value</title>
-<link rel="stylesheet" href="./app.css">
+<meta name="description" content="A radar for token launches that have not happened yet: every pre-token protocol in the snapshot, valued from its traded peers and paired with a farm plan.">
+<title>Token Launch Radar</title>
+<link rel="stylesheet" href="app.css">
 </head>
 <body>
-<header>
-  <div class="masthead">
-    <h1>TOKEN LAUNCH RADAR</h1>
-    <p class="tagline">Every protocol that records no token yet, ranked by what its launch would be worth — and how to farm each one before it happens.</p>
-    <p class="meta" id="meta"></p>
-  </div>
-  <section class="model" id="model">
-    <h2>How the value is derived</h2>
-    <p id="model-text"></p>
-  </section>
-  <section class="model multiples" id="multiples">
-    <h2>The multiples, from the snapshot itself</h2>
-    <table id="multiples-table">
-      <thead>
-        <tr><th>Category</th><th>Traded peers</th><th>Median mcap / TVL</th><th>Applied to the board</th></tr>
-      </thead>
-      <tbody id="multiples-rows"></tbody>
-    </table>
-    <p class="multiples-note">A category's applied multiple blends its own median with the all-category median in proportion to its peer count, so thin evidence leans on the whole market and deep evidence stands on its own. Categories with fewer than three traded peers borrow the all-category line.</p>
-  </section>
-  <div class="controls">
-    <input id="search" type="search" placeholder="Search protocols…">
-    <select id="category"><option value="">All categories</option></select>
-    <select id="chain"><option value="">All chains</option></select>
-    <label class="check"><input id="watchonly" type="checkbox"> Watchlist only</label>
-    <select id="sort">
-      <option value="rank">Sort: implied value</option>
-      <option value="tvl">Sort: TVL</option>
-      <option value="change">Sort: 7-day growth</option>
-      <option value="years">Sort: years tokenless</option>
-    </select>
-    <span class="count" id="count"></span>
-  </div>
+<header class="masthead">
+  <h1>Token Launch Radar</h1>
+  <p class="tagline">Every protocol that records no token yet, ranked by what its launch would be worth — and how to farm each one.</p>
+  <p class="meta" id="meta-line">Loading the snapshot…</p>
 </header>
-<main>
-  <table id="board">
-    <thead>
-      <tr><th class="sortable" data-sort="rank" title="Sort by implied value">#</th><th>Protocol</th><th>Category</th><th>Chains</th><th class="sortable" data-sort="tvl" title="Sort by TVL">TVL</th><th class="sortable" data-sort="change" title="Sort by 7-day growth">7d</th><th class="sortable" data-sort="years" title="Sort by years tokenless">Years tokenless</th><th>Multiple</th><th>Implied value</th></tr>
-    </thead>
-    <tbody id="rows"></tbody>
+
+<section class="panel model">
+  <h2>How the value is derived</h2>
+  <p>Implied value = TVL &times; the category&rsquo;s median market-cap/TVL ratio among traded peers,
+  blended toward the all-category median by peer count, then adjusted by momentum (7-day TVL change),
+  longevity (+4% per year run with no token, up to six) and breadth (+1.5% per extra chain).
+  Nothing is ranked by name or by hand.</p>
+</section>
+
+<section class="panel evidence">
+  <h2>Category multiples — from the snapshot itself</h2>
+  <table class="multiples">
+    <thead><tr><th>Category</th><th>Traded peers</th><th>Median</th><th>Applied</th></tr></thead>
+    <tbody id="multiples-body"></tbody>
   </table>
-  <aside id="detail" hidden>
-    <button id="close" aria-label="Close detail">×</button>
-    <div id="detail-body"></div>
-  </aside>
-</main>
-<footer>
-  <p>Implied value is this radar's own model claim, derived only from the sealed snapshot's figures — TVL, seven-day growth, time run with no token, and what traded peers' tokens fetch per TVL dollar. It is not a prediction that a token will be issued. Protocols whose token already trades, and wrapped, staked or bridged products of them, are set aside: they are not waiting on a launch.</p>
+  <p class="note">A category with few traded peers has a noisy median, so the applied multiple is the
+  peer-count blend (n &times; category median + 4 &times; all-category median) / (n + 4). Categories with
+  fewer than three traded peers fall back to the all-category median outright.</p>
+</section>
+
+<section class="controls">
+  <input type="search" id="q" placeholder="Search protocols…" aria-label="Search protocols">
+  <select id="cat" aria-label="Filter by category"><option value="">All categories</option></select>
+  <select id="chain" aria-label="Filter by chain"><option value="">All chains</option></select>
+  <label class="watch"><input type="checkbox" id="watch"> Watchlist only</label>
+  <select id="sort" aria-label="Sort the board">
+    <option value="value">Sort: implied value</option>
+    <option value="tvl">Sort: TVL</option>
+    <option value="change">Sort: 7-day change</option>
+    <option value="years">Sort: years tokenless</option>
+  </select>
+  <span class="count" id="count"></span>
+</section>
+
+<table class="board">
+  <thead><tr>
+    <th data-sort="rank" class="sortable">#</th>
+    <th>Protocol</th>
+    <th>Category</th>
+    <th>Chains</th>
+    <th data-sort="tvl" class="sortable">TVL</th>
+    <th data-sort="change" class="sortable">7d</th>
+    <th data-sort="years" class="sortable">Yrs tokenless</th>
+    <th>Multiple</th>
+    <th>Implied value</th>
+  </tr></thead>
+  <tbody id="board-body"></tbody>
+</table>
+
+<footer class="foot">
+  <p>Every row opens a detail view with the full valuation and its farm plan. Wrapped, staked, bridged
+  and exchange products of tokens that already trade are set aside, as are versioned sequels — the
+  original is the launch candidate, not its V2.</p>
 </footer>
+
+<aside class="detail" id="detail" hidden>
+  <button class="close" id="detail-close" aria-label="Close detail">&times;</button>
+  <div id="detail-body"></div>
+</aside>
+
 <script src="../data.js"></script>
-<script src="./app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
