@@ -24,9 +24,31 @@ $('meta').textContent =
 $('model-text').textContent =
   `Traded protocols reveal what the market pays for a dollar of TVL in their category: the median market-cap-to-TVL ratio ` +
   `(across all categories here, ×${radar.global_multiple.median.toFixed(3)} from ${radar.global_multiple.peers} traded protocols). ` +
-  `A pre-token protocol's implied value is its TVL times its category's median ratio, adjusted by three factors from its own record: ` +
+  `A category's median is blended toward that all-category figure in proportion to how few traded peers back it — three peers lean most of the way, thirty barely move — ` +
+  `and a category with fewer than three traded peers borrows the all-category figure outright. ` +
+  `A pre-token protocol's implied value is its TVL times its category's applied multiple, adjusted by three factors from its own record: ` +
   `momentum (its 7-day TVL change), longevity (whole years run with no token, worth +4% a year up to six), and breadth (+1.5% per extra chain, up to seven). ` +
   `Nothing is ranked by name or by hand: change the snapshot and the board rebuilds itself.`;
+
+// The evidence table behind the multiples: every category that speaks for
+// itself, its raw median, and the blended multiple the board applies.
+$('multiples-rows').innerHTML =
+  radar.multiples
+    .map(
+      (m) => `<tr>
+        <td>${esc(m.category)}</td>
+        <td class="num">${m.peers}</td>
+        <td class="num">×${m.median.toFixed(3)}</td>
+        <td class="num value">×${m.applied.toFixed(3)}</td>
+      </tr>`,
+    )
+    .join('') +
+  `<tr class="global-row">
+        <td>All categories (fallback)</td>
+        <td class="num">${radar.global_multiple.peers}</td>
+        <td class="num">×${radar.global_multiple.median.toFixed(3)}</td>
+        <td class="num value">×${radar.global_multiple.applied.toFixed(3)}</td>
+      </tr>`;
 
 // ------------------------------------------------------------- the filters
 
@@ -64,9 +86,21 @@ function visible() {
   return list;
 }
 
+// Column headings sort too: clicking one drives the same sort select, and
+// the heading of the active order is marked.
+for (const th of document.querySelectorAll('th.sortable')) {
+  th.addEventListener('click', () => {
+    $('sort').value = th.dataset.sort;
+    render();
+  });
+}
+
 function render() {
   const list = visible();
   $('count').textContent = `${list.length} of ${rows.length} protocols`;
+  for (const th of document.querySelectorAll('th.sortable')) {
+    th.classList.toggle('sorted', th.dataset.sort === $('sort').value);
+  }
   $('rows').innerHTML = list
     .map(
       (r) => `<tr data-slug="${esc(r.slug)}">
@@ -98,8 +132,12 @@ function showDetail(slug) {
     <div class="big">${money(r.implied_value_usd)}</div>
     <div class="big-label">Implied launch value</div>
     <div class="formula">
-      TVL <b>${money(r.tvl_usd)}</b> × category multiple <b>×${r.multiple.toFixed(3)}</b>
-      (${esc(r.multiple_category)}, ${r.multiple_peers} traded peers)<br>
+      TVL <b>${money(r.tvl_usd)}</b> × applied multiple <b>×${r.multiple.toFixed(3)}</b><br>
+      ${
+        r.multiple_category === 'all categories'
+          ? `(the all-category median from ${r.multiple_peers} traded peers — this category has fewer than three of its own)`
+          : `(the ${esc(r.multiple_category)} median is ×${r.multiple_median.toFixed(3)} from ${r.multiple_peers} traded peers, blended toward the all-category ×${radar.global_multiple.median.toFixed(3)})`
+      }<br>
       × momentum <b>${factor(r.momentum_factor)}</b> (7-day TVL ${pct(r.change_7d)})
       × longevity <b>${factor(r.longevity_factor)}</b> (${r.years_tokenless === null ? 'listing date unreported' : `${r.years_tokenless} years with no token`})
       × breadth <b>${factor(r.breadth_factor)}</b> (${r.chains.length} chain${r.chains.length === 1 ? '' : 's'})

@@ -17,6 +17,16 @@
     <h2>How the value is derived</h2>
     <p id="model-text"></p>
   </section>
+  <section class="model multiples" id="multiples">
+    <h2>The multiples, from the snapshot itself</h2>
+    <table id="multiples-table">
+      <thead>
+        <tr><th>Category</th><th>Traded peers</th><th>Median mcap / TVL</th><th>Applied to the board</th></tr>
+      </thead>
+      <tbody id="multiples-rows"></tbody>
+    </table>
+    <p class="multiples-note">A category's applied multiple blends its own median with the all-category median in proportion to its peer count, so thin evidence leans on the whole market and deep evidence stands on its own. Categories with fewer than three traded peers borrow the all-category line.</p>
+  </section>
   <div class="controls">
     <input id="search" type="search" placeholder="Search protocols…">
     <select id="category"><option value="">All categories</option></select>
@@ -34,7 +44,7 @@
 <main>
   <table id="board">
     <thead>
-      <tr><th>#</th><th>Protocol</th><th>Category</th><th>Chains</th><th>TVL</th><th>7d</th><th>Years tokenless</th><th>Multiple</th><th>Implied value</th></tr>
+      <tr><th class="sortable" data-sort="rank" title="Sort by implied value">#</th><th>Protocol</th><th>Category</th><th>Chains</th><th class="sortable" data-sort="tvl" title="Sort by TVL">TVL</th><th class="sortable" data-sort="change" title="Sort by 7-day growth">7d</th><th class="sortable" data-sort="years" title="Sort by years tokenless">Years tokenless</th><th>Multiple</th><th>Implied value</th></tr>
     </thead>
     <tbody id="rows"></tbody>
   </table>

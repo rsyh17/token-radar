@@ -37,6 +37,11 @@ header { padding: 28px 34px 0; max-width: 1240px; margin: 0 auto; }
 }
 .model h2 { margin: 0 0 6px; font-size: 15px; letter-spacing: 1px; color: var(--teal); text-transform: uppercase; }
 .model p { margin: 0; line-height: 1.6; color: var(--text); }
+.multiples table { border: none; background: none; }
+.multiples th, .multiples td { padding: 5px 10px 5px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.multiples th { background: none; }
+.multiples .global-row td { color: var(--muted); }
+.multiples-note { margin-top: 10px !important; color: var(--muted); font-size: 13px; }
 .controls {
   display: flex;
   flex-wrap: wrap;
@@ -59,6 +64,10 @@ main { max-width: 1240px; margin: 0 auto; padding: 0 34px 30px; position: relati
 table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
 th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
 th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; background: var(--panel-2); }
+th.sortable { cursor: pointer; }
+th.sortable:hover { color: var(--text); }
+th.sortable.sorted { color: var(--gold); }
+th.sortable.sorted::after { content: " ▾"; }
 td.num, th.num { text-align: right; }
 tbody tr { cursor: pointer; }
 tbody tr:hover { background: var(--panel-2); }
